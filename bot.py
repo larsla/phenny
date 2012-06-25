@@ -9,6 +9,7 @@ http://inamidst.com/phenny/
 
 import sys, os, re, threading, imp
 import irc
+from cobe.brain import Brain
 
 home = os.getcwd()
 
@@ -28,6 +29,7 @@ class Phenny(irc.Bot):
       self.doc = {}
       self.stats = {}
       self.setup()
+      self.brain = Brain(config.nick+".brn")
 
    def setup(self): 
       self.variables = {}
@@ -180,6 +182,7 @@ class Phenny(irc.Bot):
             s.args = args
             s.admin = origin.nick in self.config.admins
             s.owner = origin.nick == self.config.owner
+            s.brain = self.brain
             return s
 
       return CommandInput(text, origin, bytes, match, event, args)
