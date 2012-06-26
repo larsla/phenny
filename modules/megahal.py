@@ -21,9 +21,9 @@ def _strip(phenny, input):
 
 def learn(phenny, input):
     if input.startswith("."): return
-    print "learn"
+    print "learn: " + input.encode('utf-8', errors='ignore')
     i = _strip(phenny, input)
-    input.brain.learn(i)
+    input.brain.learn(i.encode('iso8859-1', errors='ignore'))
 
 learn.rule = r'.*'
 learn.priority = 'high'
@@ -34,8 +34,8 @@ def reply(phenny, input):
     print "reply"
     r = _strip(phenny, input)
     if r.startswith("reload"): return
-    response = input.brain.reply(r)
-    #print response.encode('iso8859-1', errors='ignore')
+    response = input.brain.reply(r.encode('iso8859-1', errors='ignore'))
+    print response.encode('iso8859-1', errors='ignore')
     phenny.say(input.nick + ": " + response)
 
 reply.rule = r'$nickname.*'
