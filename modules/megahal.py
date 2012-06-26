@@ -1,22 +1,27 @@
-# -*- coding: utf-8 -*-
+# -*- coding: iso8859-1 -*-
 #!/usr/bin/env python
 """
 megahal.py - Megahal module for phenny
 """
 
 from bs4 import BeautifulSoup
+import re
 import urllib2
 
 def _strip(phenny, input):
-    #print "_strip: " + input
-    #i = unicode(input, errors='ignore')
-    r = input.lstrip(phenny.nick)
-    r = r.lstrip(": ")
-    #print u"Stripped: " + unicode(r, errors='ignore')
+    r = input
+    if re.search('^' + phenny.nick, r):
+        r = r.lstrip(phenny.nick)
+    if re.search('^:', r):
+        r = r.lstrip(":")
+    if re.search('^ ', r):
+        r = r.lstrip(" ")
+    #print "Stripped: " + r.encode('iso8859-1', errors='ignore')
     return r
 
 def learn(phenny, input):
     if input.startswith("."): return
+    print "learn"
     i = _strip(phenny, input)
     input.brain.learn(i)
 
@@ -26,12 +31,14 @@ learn.thread = False
 
 
 def reply(phenny, input):
+    print "reply"
     r = _strip(phenny, input)
     if r.startswith("reload"): return
     response = input.brain.reply(r)
+    #print response.encode('iso8859-1', errors='ignore')
     phenny.say(input.nick + ": " + response)
 
-reply.rule = r'$nickname .*'
+reply.rule = r'$nickname.*'
 reply.priority = 'high'
 reply.thread = False
 
@@ -61,8 +68,8 @@ def urllearn(phenny, input):
         f = opener.open(urllib2.Request(url=url, headers=headers))
         bs = BeautifulSoup(f.read())
         for s in bs.body.strings:
-            #print u"Learning: " + s.encode('utf-8', errors='ignore')
-            input.brain.learn(s.encode('utf-8', errors='ignore'))
+            print "Learning: " + s.encode('iso8859-1', errors='ignore')
+            input.brain.learn(s.encode('iso8859-1', errors='ignore'))
 
 urllearn.rule = r'\.urllearn (\S+)'
 urllearn.priority = 'high'
